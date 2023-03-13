@@ -1,10 +1,10 @@
 name: constraint_solver
 description: A starting point for Dart libraries or applications.
-version: 1.0.0
-#repository: https://github.com/my_org/my_repo
+version: 1.0.0-pre.0
+repository: https://github.com/johnpryan/constraint_solver
 
 environment:
-  sdk: '>=3.0.0-218.1.beta <4.0.0'
+  sdk: '>=2.19.2 <3.0.0'
 
 dependencies:
   # TODO: Add dependencies
