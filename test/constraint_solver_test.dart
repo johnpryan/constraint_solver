@@ -2,11 +2,11 @@ import 'package:checks/checks.dart';
 import 'package:constraint_solver/constraint_solver.dart';
 import 'package:test/test.dart';
 
-class _Person {
+class Guest {
   final String name;
   final List<String> dislikes;
 
-  _Person(
+  Guest(
     this.name, {
     this.dislikes = const [],
   });
@@ -17,11 +17,11 @@ class _Person {
   }
 }
 
-class _TestConstraint extends Constraint<_Person, String> {
-  _TestConstraint(super.variables);
+class AvoidDislikes extends Constraint<Guest, String> {
+  AvoidDislikes(super.variables);
 
   @override
-  bool isSatisfied(Map<_Person, String> assignment) {
+  bool isSatisfied(Map<Guest, String> assignment) {
     Set<String> assignedItems = {};
     for (var entry in assignment.entries) {
       var person = entry.key;
@@ -44,35 +44,35 @@ class _TestConstraint extends Constraint<_Person, String> {
 void main() {
   group('constraint satisfaction framework', () {
     test('Satisfies constraints', () {
-      var doug = _Person(
+      var doug = Guest(
         'Doug',
         dislikes: ['artichoke'],
       );
-      var patrick = _Person(
+      var patrick = Guest(
         'Patrick',
         dislikes: ['bananas'],
       );
-      var susan = _Person(
+      var susan = Guest(
         'Susan',
         dislikes: ['broccoli'],
       );
 
       var variables = [doug, patrick, susan];
 
-      var items = [
+      var meals = [
         'artichoke',
         'bananas',
         'broccoli',
       ];
 
       var domains = {
-        doug: items,
-        patrick: items,
-        susan: items,
+        doug: meals,
+        patrick: meals,
+        susan: meals,
       };
 
-      var csp = CSP<_Person, String>(variables, domains);
-      csp.addConstraint(_TestConstraint(variables));
+      var csp = CSP<Guest, String>(variables, domains);
+      csp.addConstraint(AvoidDislikes(variables));
 
       var result = csp.backtrackingSearch();
 
