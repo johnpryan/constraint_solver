@@ -35,7 +35,7 @@ var domains = {
 
 Finally, a constraint can be defined by subclassing of the `Constraint` class:
 
-```
+```dart
 class AvoidDislikes extends Constraint<Person, String> {
   AvoidDislikes(super.variables);
 
