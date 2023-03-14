@@ -1,3 +1,4 @@
+name: Dart tests
 on:
   push:
     branches: [ "main" ]
