@@ -8,13 +8,41 @@ abstract class Constraint<V, D> {
   bool isSatisfied(Map<V, D> assignment);
 }
 
-/// TODO: Add documentation
+/// An instance of a constraint satisfaction problem.
+///
+/// A CSP framework is modeled as a set of _variables_ that can be assigned
+/// within a range called a _domain_.
+///
+///  ```dart
+/// var doug = Guest('Doug', dislikes: ['artichoke']);
+/// var patrick = Guest('Patrick', dislikes: ['bananas']);
+/// var susan = Guest('Susan', dislikes: ['broccoli']);
+/// var variables = [doug, patrick, susan];
+///
+/// var meals = ['artichoke', 'bananas', 'broccoli'];
+///
+/// var domains = {
+///   doug: meals,
+///   patrick: meals,
+///   susan: meals,
+/// };
+///
+/// var csp = CSP<Guest, String>(variables, domains);
+///
+/// csp.addConstraint(AvoidDislikes(variables));
+///
+/// var result = csp.backtrackingSearch();
+/// print(result);
+/// ```
+///
 class CSP<V, D> {
   final List<V> variables;
   final Map<V, List<D>> domains;
   final Map<V, List<Constraint<V, D>>> constraints = {};
 
-  /// TODO
+  /// Creates an instance of a constraint satisfaction problem.
+  ///
+  /// Each variable in the [variables] list must be a key in the [domains] map.
   CSP(this.variables, this.domains) {
     for (var variable in variables) {
       // Add an entry for each variable to the constraints map
@@ -28,7 +56,7 @@ class CSP<V, D> {
     }
   }
 
-  /// TODO: Add documentation
+  /// Adds a constraint to be used when finding a solution.
   void addConstraint(Constraint<V, D> constraint) {
     for (var variable in constraint.variables) {
       // Check that this constraint's variable is present in this CSP
@@ -56,7 +84,12 @@ class CSP<V, D> {
     return true;
   }
 
-  /// TODO: Add documentation
+  /// Runs a recursive backtracking search for a solution that satisfies all of
+  /// the constraints. The constraints are satisfied when isConsistent returns
+  /// true.
+  ///
+  /// This algorithm is similar to a depth-first search and has a time
+  /// complexity of O(V) where V is the number of possible assignments.
   Map<V, D>? backtrackingSearch([Map<V, D> assignment = const {}]) {
     // If every variable is assigned, the search is complete.
     if (assignment.length == variables.length) {
