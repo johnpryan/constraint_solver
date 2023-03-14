@@ -5,62 +5,6 @@ final dateFormat = DateFormat.yMEd().add_jms();
 
 // A scheduling problem, where the variables are a user's tasks,
 // and the domain is the times where the user is available.
-class Task {
-  final String name;
-  final Duration duration;
-
-  Task(this.name, this.duration);
-
-  @override
-  String toString() => '$name (${duration.inMinutes}m)';
-}
-
-class TimeSlot {
-  final DateTime start;
-  final DateTime end;
-
-  TimeSlot(this.start, this.end);
-
-  Duration get duration => end.difference(start);
-
-  @override
-  String toString() => '($start, $end)';
-}
-
-class TaskConstraint extends Constraint<Task, TimeSlot> {
-  TaskConstraint(super.variables);
-
-  @override
-  bool isSatisfied(Map<Task, TimeSlot> assignment) {
-    // Create a map containing the remaining time for each time slot
-    Map<TimeSlot, Duration> remainingTime = {};
-    for (var timeSlot in assignment.values) {
-      remainingTime[timeSlot] =
-          Duration(milliseconds: timeSlot.duration.inMilliseconds);
-    }
-
-    // Check that each task fits in the available time slot.
-    for (var task in assignment.keys) {
-      final timeSlot = assignment[task]!;
-      final remainingTimeInTimeSlot = remainingTime[timeSlot];
-
-      if (remainingTimeInTimeSlot == null) {
-        return false;
-      }
-
-      // If there's not enough time remaining, this is not a valid assignment.
-      if (remainingTimeInTimeSlot < task.duration) {
-        return false;
-      }
-
-      // Subtract the task's time from the remaining time in the time slot.
-      remainingTime[timeSlot] = remainingTimeInTimeSlot - task.duration;
-    }
-
-    return true;
-  }
-}
-
 void main() {
   final tasks = [
     Task('Feed the dogs', Duration(minutes: 15)),
@@ -135,4 +79,60 @@ Map<Task, DateTime> scheduleTasks(List<Task> tasks, List<TimeSlot> timeSlots) {
   }
 
   return scheduledTasks;
+}
+
+class Task {
+  final String name;
+  final Duration duration;
+
+  Task(this.name, this.duration);
+
+  @override
+  String toString() => '$name (${duration.inMinutes}m)';
+}
+
+class TimeSlot {
+  final DateTime start;
+  final DateTime end;
+
+  TimeSlot(this.start, this.end);
+
+  Duration get duration => end.difference(start);
+
+  @override
+  String toString() => '($start, $end)';
+}
+
+class TaskConstraint extends Constraint<Task, TimeSlot> {
+  TaskConstraint(super.variables);
+
+  @override
+  bool isSatisfied(Map<Task, TimeSlot> assignment) {
+    // Create a map containing the remaining time for each time slot
+    Map<TimeSlot, Duration> remainingTime = {};
+    for (var timeSlot in assignment.values) {
+      remainingTime[timeSlot] =
+          Duration(milliseconds: timeSlot.duration.inMilliseconds);
+    }
+
+    // Check that each task fits in the available time slot.
+    for (var task in assignment.keys) {
+      final timeSlot = assignment[task]!;
+      final remainingTimeInTimeSlot = remainingTime[timeSlot];
+
+      if (remainingTimeInTimeSlot == null) {
+        return false;
+      }
+
+      // If there's not enough time remaining, this is not a valid assignment.
+      if (remainingTimeInTimeSlot < task.duration) {
+        return false;
+      }
+
+      // Subtract the task's time from the remaining time in the time slot.
+      remainingTime[timeSlot] = remainingTimeInTimeSlot - task.duration;
+    }
+
+    return true;
+  }
 }
