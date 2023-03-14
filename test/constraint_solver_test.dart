@@ -46,23 +46,23 @@ void main() {
     test('Satisfies constraints', () {
       var doug = _Person(
         'Doug',
-        dislikes: ['hot dogs'],
+        dislikes: ['artichoke'],
       );
       var patrick = _Person(
         'Patrick',
-        dislikes: ['cheese'],
+        dislikes: ['bananas'],
       );
       var susan = _Person(
         'Susan',
-        dislikes: ['bananas'],
+        dislikes: ['broccoli'],
       );
 
       var variables = [doug, patrick, susan];
 
       var items = [
-        'cheese',
+        'artichoke',
         'bananas',
-        'hot dogs',
+        'broccoli',
       ];
 
       var domains = {
@@ -76,14 +76,13 @@ void main() {
 
       var result = csp.backtrackingSearch();
 
-      check(result).isNotNull();
-      result = result!;
-      check(result[doug]).isNotNull();
-      check(result[doug]).equals('cheese');
-      check(result[patrick]).isNotNull();
-      check(result[patrick]).equals('bananas');
-      check(result[susan]).isNotNull();
-      check(result[susan]).equals('hot dogs');
+      check(result).isNotNull().length.equals(3);
+
+      check(result).isNotNull().deepEquals({
+        doug: 'bananas',
+        patrick: 'broccoli',
+        susan: 'artichoke',
+      });
     });
   });
 }
