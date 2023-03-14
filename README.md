@@ -47,7 +47,7 @@ class AvoidDislikes extends Constraint<Person, String> {
 ```
 
 To run a backtracking search of the solution space, instantiante the `CSP` class
-and call the `backTrackingSearch` function:
+and call the `backtrackingSearch` function:
 
 ```dart
 var csp = CSP<Person, String>(variables, domains);

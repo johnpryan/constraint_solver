@@ -1,3 +1,7 @@
+## 1.0.0
+
+- Release version 1.0.0
+
 ## 1.0.0-pre.2
 
 - Add pub.dev badge to README
