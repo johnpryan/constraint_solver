@@ -18,3 +18,6 @@ jobs:
         run: dart analyze --fatal-infos
       - name: Run tests
         run: dart test
+      - name: Convert coverage to lcov
+        run: dart run coverage:format_coverage -i ./coverage -o ./coverage/lcov.info --lcov --report-on lib/
+      - uses: coverallsapp/github-action@v2
