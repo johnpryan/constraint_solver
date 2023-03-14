@@ -34,6 +34,53 @@ void main() {
   }
 }
 
+Map<Task, DateTime> scheduleTasks(List<Task> tasks, List<TimeSlot> timeSlots) {
+  final domains = <Task, List<TimeSlot>>{};
+
+  // Any task can be scheduled into any time slot:
+  for (var task in tasks) {
+    domains[task] = timeSlots;
+  }
+
+  final csp = CSP<Task, TimeSlot>(tasks, domains);
+
+  csp.addConstraint(TaskConstraint(tasks));
+
+  final result = csp.backtrackingSearch();
+
+  if (result == null) {
+    throw ('The tasks could not be scheduled in the provided time slots.');
+  }
+
+  // Assign an actual time to schedule each task in the time slot. For example,
+  // If there are two 30 minute tasks in a 60 minute time slot, one should be
+  // scheduled at the start of the hour and the other at the 30-minute mark.
+
+  // The time each task should be scheduled at.
+  Map<Task, DateTime> scheduledTasks = {};
+  // The amount of time that has been scheduled in a TimeSlot, used to determine
+  // the time for the next task in the time slot.
+  Map<TimeSlot, Duration> scheduledTimeInTimeSlots = {};
+  for (var timeSlot in timeSlots) {
+    scheduledTimeInTimeSlots[timeSlot] = Duration(minutes: 0);
+  }
+
+  for (var entry in result.entries) {
+    final task = entry.key;
+
+    final timeSlot = entry.value;
+    final scheduledTimeInTimeSlot = scheduledTimeInTimeSlots[timeSlot];
+    if (scheduledTimeInTimeSlot == null) {
+      throw ('Unexpected null value in map: $scheduledTimeInTimeSlot');
+    }
+    scheduledTasks[task] = timeSlot.start.add(scheduledTimeInTimeSlot);
+    scheduledTimeInTimeSlots[timeSlot] =
+        scheduledTimeInTimeSlot + task.duration;
+  }
+
+  return scheduledTasks;
+}
+
 class Task {
   final String name;
   final Duration duration;
@@ -88,51 +135,4 @@ class TaskConstraint extends Constraint<Task, TimeSlot> {
 
     return true;
   }
-}
-
-Map<Task, DateTime> scheduleTasks(List<Task> tasks, List<TimeSlot> timeSlots) {
-  final domains = <Task, List<TimeSlot>>{};
-
-  // Any task can be scheduled into any time slot:
-  for (var task in tasks) {
-    domains[task] = timeSlots;
-  }
-
-  final csp = CSP<Task, TimeSlot>(tasks, domains);
-
-  csp.addConstraint(TaskConstraint(tasks));
-
-  final result = csp.backtrackingSearch();
-
-  if (result == null) {
-    throw ('The tasks could not be scheduled in the provided time slots.');
-  }
-
-  // Assign an actual time to schedule each task in the time slot. For example,
-  // If there are two 30 minute tasks in a 60 minute time slot, one should be
-  // scheduled at the start of the hour and the other at the 30-minute mark.
-
-  // The time each task should be scheduled at.
-  Map<Task, DateTime> scheduledTasks = {};
-  // The amount of time that has been scheduled in a TimeSlot, used to determine
-  // the time for the next task in the time slot.
-  Map<TimeSlot, Duration> scheduledTimeInTimeSlots = {};
-  for (var timeSlot in timeSlots) {
-    scheduledTimeInTimeSlots[timeSlot] = Duration(minutes: 0);
-  }
-
-  for (var entry in result.entries) {
-    final task = entry.key;
-
-    final timeSlot = entry.value;
-    final scheduledTimeInTimeSlot = scheduledTimeInTimeSlots[timeSlot];
-    if (scheduledTimeInTimeSlot == null) {
-      throw ('Unexpected null value in map: $scheduledTimeInTimeSlot');
-    }
-    scheduledTasks[task] = timeSlot.start.add(scheduledTimeInTimeSlot);
-    scheduledTimeInTimeSlots[timeSlot] =
-        scheduledTimeInTimeSlot + task.duration;
-  }
-
-  return scheduledTasks;
 }
