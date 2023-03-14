@@ -1,6 +1,6 @@
 name: constraint_solver
 description: A general-purpose backtracking constraint satisfaction algorithm.
-version: 1.0.0-pre.0
+version: 1.0.0-pre.1
 repository: https://github.com/johnpryan/constraint_solver
 
 environment:
