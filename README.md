@@ -62,4 +62,6 @@ For complete examples, see the
 [examples/](https://github.com/johnpryan/constraint_solver/tree/main/example)
 directory.
 
+## References
 
+_Classic Computer Science Problems in Java_ - David Kopec
