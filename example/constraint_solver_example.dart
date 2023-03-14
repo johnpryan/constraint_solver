@@ -5,6 +5,35 @@ final dateFormat = DateFormat.yMEd().add_jms();
 
 // A scheduling problem, where the variables are a user's tasks,
 // and the domain is the times where the user is available.
+void main() {
+  final tasks = [
+    Task('Feed the dogs', Duration(minutes: 15)),
+    Task('Work on highlight', Duration(minutes: 15)),
+    Task('Eat breakfast', Duration(minutes: 30)),
+  ];
+
+  final timeSlots = [
+    TimeSlot(
+      DateTime(2023, 2, 14, 8),
+      DateTime(2023, 2, 14, 9),
+    ),
+    TimeSlot(
+      DateTime(2023, 2, 14, 11),
+      DateTime(2023, 2, 14, 12),
+    ),
+  ];
+
+  final scheduledTasks = scheduleTasks(tasks, timeSlots);
+
+  for (var task in scheduledTasks.keys) {
+    final startTime = scheduledTasks[task];
+    if (startTime == null) {
+      throw ('Unexpected null value in map: $scheduledTasks');
+    }
+    print('$task: ${dateFormat.format(startTime)}');
+  }
+}
+
 class Task {
   final String name;
   final Duration duration;
@@ -58,35 +87,6 @@ class TaskConstraint extends Constraint<Task, TimeSlot> {
     }
 
     return true;
-  }
-}
-
-void main() {
-  final tasks = [
-    Task('Feed the dogs', Duration(minutes: 15)),
-    Task('Work on highlight', Duration(minutes: 15)),
-    Task('Eat breakfast', Duration(minutes: 30)),
-  ];
-
-  final timeSlots = [
-    TimeSlot(
-      DateTime(2023, 2, 14, 8),
-      DateTime(2023, 2, 14, 9),
-    ),
-    TimeSlot(
-      DateTime(2023, 2, 14, 11),
-      DateTime(2023, 2, 14, 12),
-    ),
-  ];
-
-  final scheduledTasks = scheduleTasks(tasks, timeSlots);
-
-  for (var task in scheduledTasks.keys) {
-    final startTime = scheduledTasks[task];
-    if (startTime == null) {
-      throw ('Unexpected null value in map: $scheduledTasks');
-    }
-    print('$task: ${dateFormat.format(startTime)}');
   }
 }
 
